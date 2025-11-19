@@ -1,0 +1,158 @@
+.back-to-list-container {
+  margin-top: 120px;
+  margin-left: 10%;
+  margin-bottom: 40px;
+}
+
+.ad-main-page {
+  margin-top: 20px;
+  display: flex;
+  justify-content:space-evenly;
+  margin: 0 20px 20px 20px;
+}
+
+.image-slider {
+  margin-bottom: 20px;
+}
+
+.ad-info-container {
+  width: 600px;
+  margin-right: -100px;
+}
+
+.ad-info-container h2 {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.ad-info-container img {
+  width: 400px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+}
+
+.description-table {
+  margin: 20px;
+  width: 150%;
+}
+
+.description-table th,
+.description-table td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.ad-moderation-container {
+  width: 500px;
+  padding-left: 30px;
+}
+
+.moderation-history {
+  /* border: #00aaff solid 2px; */
+  border-radius: 10px;
+  padding: 10px;
+}
+.moderation-history li {
+  list-style-position: inside;
+}
+
+.moderators-panel {
+  display: flex;
+  justify-content: space-between;
+}
+
+.moderators-panel button {
+  margin: 10px;
+  border: none;
+}
+.pannel-approve {
+  background-color: green;
+}
+.pannel-approve:hover { background-color: rgb(35, 175, 89);}
+
+.pannel-reject {
+  background-color: red;
+}
+.pannel-reject:hover { background-color: rgb(200, 79, 79);}
+
+.pannel-rewrite {
+  background-color: rgb(213, 141, 7);
+}
+.pannel-rewrite:hover { background-color: rgb(228, 169, 59);}
+
+.back-to-list-button {
+  padding: 15px;
+  background-color: white ;
+  border: #00aaff solid 3px;
+  border-radius: 8px;
+  color: black;
+  transition: all 0.25s ease;
+}
+.back-to-list-button:hover, 
+.nav-button:hover {
+  background-color: rgb(0,0,0,0.2);
+}
+
+.reject-form,
+.request-changes-form {
+  margin-top: 12px;
+  background-color:azure;
+  padding: 15px;
+  border-radius: 10px;
+  border: rgb(0,0,0,0.5) solid 1px;
+}
+
+.reject-form select {
+  background-color: white;
+  color: black;
+  height: 30px;
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.reject-form label,
+.request-changes-form label {
+  font-size: 18px;
+  margin-bottom: 10px;
+  display: block;
+}
+.reject-form textarea,
+.request-changes-form textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: white;
+  border-radius: 5px;
+  color: black;
+  padding: 5px;
+}
+
+.send-container {
+  display: flex;
+  justify-content: flex-end;
+}
+.send-container * {
+  margin: 5px;;
+}
+
+.navigate-buttons {
+  margin-left: 10%;
+  margin-right: 10%;
+  display: flex;
+  justify-content: space-between;
+}
+.nav-button {
+  color: black;
+  background-color: white;
+  border: #00aaff solid 3px;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 90px;
+  margin-top: 20px;
+  transition: all 0.25s ease;
+}
+
+@media screen and (max-width: 1024px) {
+  .ad-main-page {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,102 @@
+.main-page {
+  margin-top: 80px;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.sidebar-toggle-btn {
+  display: none;
+  cursor: pointer;
+  margin-left: 10px;
+  background-color: #00aaff;
+  border: none;
+  position: fixed;
+  top: 80px;
+  left: 20px;
+}
+
+.sorting-container {
+  display: flex;
+  align-items: center;
+}
+
+.sorting-block {
+  display:  flex;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 20px;
+
+}
+.sorting-container * {
+  margin-right: 10px;
+}
+
+.sorting-container select, .sorting-container input {
+  background-color: white;
+  color: black;
+  width: 120px;
+  height: 30px;
+  border-radius: 8px;
+  border-width: 1px;
+  padding: 5px;
+}
+.sorting-container label {
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+.pagination-size {
+  display: flex;
+  align-items: center;
+}
+
+.pagination {
+  margin-top: 30px;
+  margin-bottom: 100px;
+  text-align: center;
+  max-width: 800px;
+}
+.pagination button {
+  background-color:azure;
+  color: black;
+}
+.pagination .active {
+  font-weight: 800;
+  font-size: 18px;
+}
+
+@media screen and (min-width: 877px) and (max-width: 1024px) {
+  .sorting-container input {
+    width: 80px;
+  }
+  .pagination {
+    max-width: 700px;
+  }
+}
+
+@media screen and (max-width: 877px) {
+  .sorting-container {
+    flex-direction: column;
+    align-items: end;
+  }
+  .sorting-block {
+    justify-content: end;
+    margin-right: 0;
+  }
+  .pagination {
+    max-width: 570px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-page {
+    margin-top: 60px;
+  }
+  .sidebar-toggle-btn {
+    display: block;
+  }
+  .pagination {
+    max-width: 400px;
+  }
+}

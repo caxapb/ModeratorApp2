@@ -1,0 +1,52 @@
+.sidebar {
+  width: 200px;
+  padding: 10px;
+  position: sticky;
+  top: 80px;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar input {
+  background-color: white;
+  border-width: 1px;
+}
+.sidebar .text-input {
+  width: 130px;
+  margin: 5px;
+  margin-left: 0;
+  height: 30px;
+  border-radius: 8px;
+  background-color: white;
+  padding: 5px;
+}
+
+.sidebar button {
+  margin-top: 15px;
+  background-color: #00aaff;
+}
+
+.sidebar h3 {
+  margin: 15px;
+  margin-left: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 120px;
+    left: 20px;
+
+
+    background-color: white;
+    border-radius: 15px;
+    border: rgb(0,0,0,0.5) solid 1px;
+    padding-top: 0;
+    height: 70vh;
+    transform: translateX(-200%);
+    z-index: 1000;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}

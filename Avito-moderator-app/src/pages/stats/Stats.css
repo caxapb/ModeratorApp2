@@ -1,0 +1,116 @@
+.stats-page {
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-content: center;
+  margin-bottom: 100px;
+  margin: 80px 20px 100px 20px;
+}
+.stats-page h1 {
+  margin-top: 15px;
+}
+.stats-page h4 {
+  margin-bottom: 20px;
+}
+.simple-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  margin-bottom: 30px;
+  justify-items: center;
+}
+.simple-stats p {
+  border: rgb(0,0,0,0.5) solid 2px;
+  margin: 15px;
+  border-radius: 8px;
+  padding: 5px;
+  text-align: center;
+  width: 20vh;
+}
+
+.period-container {
+  background-color: azure;
+  border: rgb(0,0,0,0.5) solid 1px;
+  padding: 10px;
+  border-radius: 8px;
+  height: 65px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.period-container * {
+  margin: 15px;
+}
+.period-container button {
+  background-color: white;
+  color: black;
+  border: rgb(0,0,0,0.5) solid 1px;
+}
+.period-container .active {
+  font-weight: 700;
+}
+
+.charts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.activity-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 40px;
+  height: 350px;
+}
+.activity-charts canvas {
+  width: 450px;
+}
+.categories-chart {
+  height: 550px;
+}
+.categories-chart canvas {
+  height: 350px;
+}
+
+
+@media screen and (min-width: 1024px) and (max-width: 1280px) {
+  /* .stats-page {
+    grid-template-columns: 800px;
+  }  */
+  /* .simple-stats p {
+    width: 170px;
+  } */
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* .stats-page {
+    grid-template-columns: 750px;
+  }  */
+  .simple-stats p {
+    width: 15vh;
+  }
+  .activity-charts {
+    grid-template-columns: 1fr;
+    height: 700px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  /* .stats-page {
+    grid-template-columns: 580px;
+  }  */
+  .simple-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .simple-stats p {
+    width: 20vh;
+  }
+  .activity-charts {
+    grid-template-columns: 1fr;
+    height: 700px;
+  }
+  canvas {
+    max-width: 600px;
+  }
+}
