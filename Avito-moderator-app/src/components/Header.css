@@ -79,6 +79,15 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
+}
+nav a {
+  padding: 1px;
+  border-radius: 10px;
+}
+nav a:hover {
+  background-color: #65c7f8;
+  box-shadow: 0 0 3px 1px rgb(0,0,0,0.2);
 }
 
 .user-info {

@@ -47,6 +47,9 @@
   color: black;
   border: rgb(0,0,0,0.5) solid 1px;
 }
+.period-container button:hover {
+  background-color: rgb(0,0,0,0.2);
+}
 .period-container .active {
   font-weight: 700;
 }

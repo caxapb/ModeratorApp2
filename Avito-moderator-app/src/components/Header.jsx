@@ -27,6 +27,7 @@ export default function Header() {
     }
     return;
   }
+  
   useEffect(() => {
     window.addEventListener('keydown', keydownSearchHandler);
     return () => window.removeEventListener('keydown', keydownSearchHandler);

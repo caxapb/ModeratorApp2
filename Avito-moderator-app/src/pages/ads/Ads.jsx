@@ -47,6 +47,9 @@ export default function Ads() {
   // сохранение индексов подходящих объявлений в localStorage для того, чтобы они были доступны на карточке товара
   // (для навигации от объявления к объявлению без перехода к списку)
   useEffect(() => {
+    // во избежании излишней нагрузки сразу проверка на количество символов в поисковой строке:
+    // если их меньше 3, то не делать новый запрос на сервер (return)
+    if (search && search.length < 3) { return; }
     const params = new URLSearchParams();
 
     params.set('page', String(curPage));
@@ -62,7 +65,7 @@ export default function Ads() {
     minSelectedPrice !== '' ? params.append('minPrice', minSelectedPrice) : '';
     maxSelectedPrice !== '' ? params.append('maxPrice', maxSelectedPrice) : '';
 
-    if (search) {
+    if (search && search.length >= 3) {
       params.set('search', search);
     }
     if (sortBy) {
@@ -77,12 +80,12 @@ export default function Ads() {
         const data = await fetchData(`http://localhost:3001/api/v1/ads?${params.toString()}`);
         setAds(data.ads);
         setPagination(data.pagination);
-        localStorage.setItem('ids', JSON.stringify(data.ads.map(ad => ad.id)))
+        localStorage.setItem('ids', JSON.stringify(data.ads.map(ad => ad.id)));
       } catch (err) {
         if (err instanceof TypeError) {
-          console.error("Сетевая ошибка. TypeError:", err.message)
+          console.error("Сетевая ошибка. TypeError:", err.message);
         } else {
-          console.error("HTTP ошибка.", err.message)
+          console.error("HTTP ошибка.", err.message);
         }
       } finally {
         setLoading(false);
@@ -200,7 +203,6 @@ export default function Ads() {
     </div>
       </div>
     </div>
-
     </>
   );
 }
