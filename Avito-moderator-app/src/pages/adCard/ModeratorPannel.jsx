@@ -14,7 +14,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useModerator } from '../../hooks/useModerator';
-import fetchData from '../../utils/fetchData';
+import { fetchApprove, fetchReject, fetchRequestChanges } from '../../utils/fetchData';
 
 const reasonsReject = [
   "Запрещенный товар",
@@ -33,21 +33,12 @@ export default function ModeratorPannel({ id }) {
   const [comment, setComment] = useState('');
 
   const handleApprove = useCallback(async () => {
-    if (!moderator?.permissions?.includes("approve_ads")) {
-      alert("У вас недостаточно прав");
-      return;
+    const result = await fetchApprove({ moderator, id });
+    if (result) {
+      window.location.reload();
+    } else {
+      alert("Ошибка во время одобрения объявления.");
     }
-
-    try {
-      await fetchData(`http://localhost:3001/api/v1/ads/${id}/approve`, { method: 'POST' });
-    } catch (err) {
-      if (err instanceof TypeError) {
-        console.error("Сетевая ошибка:", err.message);
-      } else {
-        console.error("Ошибка при одобрении объявления.", err.message);
-      }
-    }
-    window.location.reload();
   }, [moderator, id]);
 
   useEffect(() => {
@@ -79,67 +70,38 @@ export default function ModeratorPannel({ id }) {
 
   const handleReject = async(e) => {
     e.preventDefault();
-    if (!moderator?.permissions?.includes("reject_ads")) {
-      alert("У вас недостаточно прав");
-      return;
-    }
-
     const body = { 'reason': reason, 'comment': comment.trim() };
-
-    try {
-      await fetchData(`http://localhost:3001/api/v1/ads/${id}/reject`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      setShowRejectForm(false);
-      setReason('');
-      setComment('');
-    } catch (err) {
-      if (err instanceof TypeError) {
-        console.error("Сетевая ошибка:", err.message);
-      } else {
-        console.error("Ошибка при отклонении объявления.", err.message);
-      }
+    const result = await fetchReject({ moderator, id, body });
+    if (result) {
+      window.location.reload();
+    } else {
+      alert('Ошибка во время отклонения объявления.');
     }
-    window.location.reload();
   };
 
   const handleRequestChanges = async(e) => {
     e.preventDefault();
-    if (!moderator?.permissions?.includes("request_changes")) {
-      alert("У вас недостаточно прав");
-      return;
-    }
-
     const body = { 'reason': reason, 'comment': comment.trim() };
-
-    try {
-      await fetchData(`http://localhost:3001/api/v1/ads/${id}/request-changes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      setShowRejectForm(false);
-      setReason('');
-      setComment('');
-    } catch (err) {
-      if (err instanceof TypeError) {
-        console.error("Сетевая ошибка:", err.message);
-      } else {
-        console.error("Ошибка при отправке объявления на доработку.", err.message);
-      }
+    const result = await fetchRequestChanges({ moderator, id, body });
+    if (result) {
+      window.location.reload();
+    } else {
+      alert('Ошибка во время отправки объявления на доработку.');
     }
-    window.location.reload();
   };
   
-
   return (
     <>
     <div className="moderators-panel">
       <button className="pannel-approve" onClick={() => { handleApprove() }}>Одобрить</button>
-      <button className="pannel-reject" onClick={() => { setShowRejectForm(true) }}>Отклонить</button>
-      <button className="pannel-rewrite" onClick={() => { setShowRequestChangesForm(true) }}>Доработать</button>
+      <button className="pannel-reject" onClick={() => { 
+        setShowRejectForm(true);
+        setShowRequestChangesForm(false);  
+      }}>Отклонить</button>
+      <button className="pannel-rewrite" onClick={() => { 
+        setShowRequestChangesForm(true); 
+        setShowRejectForm(false);  
+      }}>Доработать</button>
     </div>
     <div>
     {/* если showRejectForm - состояние, говорящее о том, что была нажата клавиша или кнопка на Отклонение - 

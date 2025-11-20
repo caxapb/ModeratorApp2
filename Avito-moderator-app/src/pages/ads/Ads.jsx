@@ -15,8 +15,11 @@ import Sidebar from './Sidebar';
 import AdPreview from '../../components/AdPreview';
 import fetchData from '../../utils/fetchData';
 import { useSearchParams } from 'react-router-dom';
+import { useModerator } from '../../hooks/useModerator';
+import AdsHeader from './AdsHeader';
+import Pagination from './Pagination';
 
-import './Ads.css'
+import './styles/Ads.css'
 
 export default function Ads() {
   const [ads, setAds] = useState([]);
@@ -41,6 +44,50 @@ export default function Ads() {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  const [moderator, loadingModerator] = useModerator();
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [allAreChosen, setAllAreChosen] = useState(false);
+  const toggleSelection = (id) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+    console.log(selectedIds);
+  };
+  const selectAll = () => {
+    setSelectedIds(allAreChosen ? new Set() : new Set(ads.map(ad => ad.id)));
+    setAllAreChosen(!allAreChosen);
+  };
+
+  const clearSelection = () => {
+    setSelectedIds(new Set());
+    setAllAreChosen(false);
+  };
+  const bulkApprove = async () => {
+    if (selectedIds.size === 0) return;
+    if (!moderator?.permissions?.includes("approve_ads")) {
+      alert("У вас недостаточно прав");
+      return;
+    }
+
+    try {
+      selectedIds.forEach( async (id) => {
+        await fetchData(`http://localhost:3001/api/v1/ads/${id}/approve`, { method: 'POST' });
+      });
+      clearSelection();
+    } catch (err) {
+      if (err instanceof TypeError) {
+        console.error("Сетевая ошибка:", err.message);
+      } else {
+        console.error("Ошибка при одобрении объявления.", err.message);
+      }
+    }
+  };
+
 
   // формирование строки запроса с фильтрами и сортировкой
   // получение ответа: сложный объект со списком объявлений и информацией о пагинации
@@ -127,6 +174,35 @@ export default function Ads() {
     setLimit(value);
     setCurPage(1);
   };
+
+  const sidebarParams = {
+    selectedStatuses: selectedStatuses,
+    setSelectedStatuses: setSelectedStatuses,
+    selectedCategory: selectedCategory,
+    setSelectedCategory: setSelectedCategory,
+    minSelectedPrice: minSelectedPrice,
+    setMinSelectedPrice: setMinSelectedPrice,
+    maxSelectedPrice: maxSelectedPrice,
+    setMaxSelectedPrice: setMaxSelectedPrice,
+    isSidebarOpen: isSidebarOpen
+  };
+  const adsHeaderParams = {
+    sortBy: sortBy, 
+    setSortBy: setSortBy,
+    sortOrder: sortOrder, 
+    setSortOrder: setSortOrder,
+    limit: limit, 
+    changeLimit: changeLimit,
+    selectedIds: selectedIds,
+    allAreChosen: allAreChosen,
+    selectAll: selectAll,
+    moderator: moderator
+  };
+  const paginationParams = {
+    totalItems, curPage, 
+    totalPages, goTo
+  };
+
   // Порядок:
   // формирование компонента сайдбара
   // формирование полей для сортировки, обработчиков событий при их изменении и количества объявлений на страницу
@@ -138,69 +214,17 @@ export default function Ads() {
       <button className="sidebar-toggle-btn" onClick={toggleSidebar}>
         ☰
       </button>
-      <Sidebar 
-        selectedStatuses={selectedStatuses}
-        setSelectedStatuses={setSelectedStatuses}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        minSelectedPrice={minSelectedPrice}
-        setMinSelectedPrice={setMinSelectedPrice}
-        maxSelectedPrice={maxSelectedPrice}
-        setMaxSelectedPrice={setMaxSelectedPrice}
-        isSidebarOpen={isSidebarOpen}
-      />
+      <Sidebar {...sidebarParams}/>
 
       <div>
-        <div className="sorting-container">
-          <div className='sorting-block'> 
-          <div> <label>Сортировка:&nbsp;</label> </div>
-          <div> 
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-            <option value="">Нет</option>
-            <option value="createdAt">По дате</option>
-            <option value="price">По цене</option>
-            <option value="priority">По приоритету</option>
-            </select>
-          </div>
-
-          <div>
-            <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
-            <option value="">Порядок</option>
-            <option value="asc">Возрастание</option>
-            <option value="desc">Убывание</option>
-            </select>
-          </div>     
-          </div>
-
-          <div className='pagination-size'>
-            <label>Единиц на странице:  </label>
-            <input type="number" value={limit}
-              onChange={changeLimit}/>
-          </div>     
-
-        </div>
-
+        <AdsHeader {...adsHeaderParams}/>
         <div className="ad-list">
           {ads.map(ad => (
-            <AdPreview key={ad.id} ad={ad} />
+            <AdPreview key={ad.id} ad={ad} isSelected={selectedIds.has(ad.id)} onToggle={() => {toggleSelection(ad.id)}} />
           ))}
-        </div>
-        <div className='pagination'>
-      <div className="pagination-info">
-        Всего {totalItems} объявлений
-      </div>
-      <div>
-        <button onClick={() => goTo(currentPage - 1)}> ◀ </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button key={page} onClick={() => goTo(page)}
-                className={page === currentPage ? 'active' : ''}>
-                {page}
-              </button>
-            ))}
+          <Pagination {...paginationParams}/>
 
-        <button onClick={() => goTo(currentPage + 1)} disabled={currentPage >= totalPages}> ▶ </button>
-      </div>
-    </div>
+        </div>
       </div>
     </div>
     </>

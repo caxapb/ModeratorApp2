@@ -8,10 +8,14 @@ import { Link } from 'react-router-dom';
 import './AdPreview.css'
 
 
-export default function AdPreview({ ad }) {
+export default function AdPreview({ ad, isSelected, onToggle }) {
   return (
-    <Link to={`/item/${ad.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-
+    <div className={`ad-preview-container ${isSelected ? 'selected' : ''}`}>
+      <label>
+        <input type="checkbox" checked={isSelected} onChange={onToggle}/>
+        <span className="checkmark"></span>
+      </label>
+      <Link to={`/item/${ad.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className="ad-preview">
         <img src={ad.images[0] || catImage} alt="Товар" />
         <div className='description-container'>
@@ -23,6 +27,7 @@ export default function AdPreview({ ad }) {
           <p>Приоритет: {ad.priority === "urgent" ? "Срочный ❗️" : "Нормальный"}</p>
         </div>
       </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

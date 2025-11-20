@@ -6,7 +6,7 @@
 // работают с состояниями для синхронного изменения
 // ========================================================================================
 
-import './Sidebar.css'
+import './styles/Sidebar.css'
 
 // Из схемы Advertisement (tech-int3-server/schema.yaml)
 const statuses = ['pending', 'approved', 'rejected', 'draft'];
