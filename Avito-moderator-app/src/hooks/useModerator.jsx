@@ -6,6 +6,7 @@
 // ========================================================================================
 
 import { useState, useEffect } from 'react';
+import fetchData from '../utils/fetchData';
 
 export const useModerator = () => {
   const [moderator, setModerator] = useState(null);
@@ -14,18 +15,22 @@ export const useModerator = () => {
   useEffect(() => {
     const fetchModerator = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/v1/moderators/me');
-        if (response.ok) {
-          const data = await response.json();
-          setModerator(data);
+        const data = await fetchData('http://localhost:3001/api/v1/moderators/me');
+        setModerator(data);
+      } catch (err) {
+        if (err instanceof TypeError) {
+          console.error("Сетевая ошибка. TypeError:", err.message)
+        } else {
+          console.error("HTTP ошибка.", err.message)
         }
       } finally {
         setLoading(false);
       }
-    };
+    }
     fetchModerator();
   }, []);
 
+  // return [ null, false ];
 
-  return {moderator, loading};
+  return [ moderator, loading ];
 };

@@ -10,8 +10,8 @@ import { useEffect, useRef } from 'react';
 import UserImg from '../assets/user2.png'
 import './Header.css'
 
-export default function Header() {
-  const { moderator, loading } = useModerator();
+export default function Header() {  
+  const [ moderator, loading ] = useModerator();
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('search') || '';
 

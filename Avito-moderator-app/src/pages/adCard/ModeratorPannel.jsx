@@ -12,8 +12,9 @@
 // ========================================================================================
 
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useModerator } from '../../hooks/useModerator';
+import fetchData from '../../utils/fetchData';
 
 const reasonsReject = [
   "Запрещенный товар",
@@ -25,11 +26,29 @@ const reasonsReject = [
 ];
 
 export default function ModeratorPannel({ id }) {
-  const { moderator, loading } = useModerator();
+  const [moderator, loading] = useModerator();
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [showRequestChangesForm, setShowRequestChangesForm] = useState(false);
   const [reason, setReason] = useState(reasonsReject[0]);
   const [comment, setComment] = useState('');
+
+  const handleApprove = useCallback(async () => {
+    if (!moderator?.permissions?.includes("approve_ads")) {
+      alert("У вас недостаточно прав");
+      return;
+    }
+
+    try {
+      await fetchData(`http://localhost:3001/api/v1/ads/${id}/approve`, { method: 'POST' });
+    } catch (err) {
+      if (err instanceof TypeError) {
+        console.error("Сетевая ошибка:", err.message);
+      } else {
+        console.error("Ошибка при одобрении объявления.", err.message);
+      }
+    }
+    window.location.reload();
+  }, [moderator, id]);
 
   useEffect(() => {
     const handleKey = (e) => {
@@ -58,60 +77,60 @@ export default function ModeratorPannel({ id }) {
     return <div>Доступ запрещен</div>;
   }
 
-  function handleApprove () {
-    if (!moderator.permissions.includes("approve_ads")) {
+  const handleReject = async(e) => {
+    e.preventDefault();
+    if (!moderator?.permissions?.includes("reject_ads")) {
       alert("У вас недостаточно прав");
       return;
     }
-    fetch(`http://localhost:3001/api/v1/ads/${id}/approve`, { method: 'POST' });
+
+    const body = { 'reason': reason, 'comment': comment.trim() };
+
+    try {
+      await fetchData(`http://localhost:3001/api/v1/ads/${id}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      setShowRejectForm(false);
+      setReason('');
+      setComment('');
+    } catch (err) {
+      if (err instanceof TypeError) {
+        console.error("Сетевая ошибка:", err.message);
+      } else {
+        console.error("Ошибка при отклонении объявления.", err.message);
+      }
+    }
+    window.location.reload();
   };
 
-  const handleReject = async() => {
-    if (!moderator.permissions.includes("reject_ads")) {
+  const handleRequestChanges = async(e) => {
+    e.preventDefault();
+    if (!moderator?.permissions?.includes("request_changes")) {
       alert("У вас недостаточно прав");
       return;
     }
 
-    const body = { reason };
-    if (comment) {
-      body.comment = comment.trim();
+    const body = { 'reason': reason, 'comment': comment.trim() };
+
+    try {
+      await fetchData(`http://localhost:3001/api/v1/ads/${id}/request-changes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      setShowRejectForm(false);
+      setReason('');
+      setComment('');
+    } catch (err) {
+      if (err instanceof TypeError) {
+        console.error("Сетевая ошибка:", err.message);
+      } else {
+        console.error("Ошибка при отправке объявления на доработку.", err.message);
+      }
     }
-
-    const res = await fetch(`http://localhost:3001/api/v1/ads/${id}/reject`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(text || 'Ошибка запроса');
-    }
-
-    setShowRejectForm(false);
-    setReason('');
-    setComment('');
-  };
-
-  const handleRequestChanges = async() => {
-    if (!moderator.permissions.includes("request_changes")) {
-      alert("У вас недостаточно прав");
-      return;
-    }
-    const body = { 'comment': comment.trim() };
-    const res = await fetch(`http://localhost:3001/api/v1/ads/${id}/request-changes`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(text || 'Ошибка запроса');
-    }
-
-    setShowRequestChangesForm(false);
-    setComment('');
+    window.location.reload();
   };
   
 
@@ -132,8 +151,8 @@ export default function ModeratorPannel({ id }) {
         <form className="reject-form" onSubmit={handleReject}>
           <label>Выберите причину отклонения (обязательно):</label>
           <select required value={reason} onChange={(e) => setReason(e.target.value)} >
-            {reasonsReject.map((r,ind) => (
-              ind === 0 ? <option key={r} value={r} selected>{r}</option> : <option key={r} value={r}>{r}</option>
+            {reasonsReject.map((r) => (
+              <option key={r} value={r}>{r}</option>
             ))}
           </select>
 
@@ -159,6 +178,13 @@ export default function ModeratorPannel({ id }) {
       {/* Аналогично обработке отклонения */}
       {showRequestChangesForm && (
         <form className="request-changes-form" onSubmit={handleRequestChanges}>
+          <label>Выберите причину отклонения (обязательно):</label>
+          <select required value={reason} onChange={(e) => setReason(e.target.value)} >
+            {reasonsReject.map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+
           <label> Дайте комментарий (обязательно) </label>
           <textarea value={comment}
             onChange={(e) => setComment(e.target.value)}
@@ -178,6 +204,5 @@ export default function ModeratorPannel({ id }) {
       )}
     </div>
     </>
-
   );
 }

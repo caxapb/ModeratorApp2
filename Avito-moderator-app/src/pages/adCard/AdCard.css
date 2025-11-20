@@ -32,7 +32,7 @@
 
 .description-table {
   margin: 20px;
-  width: 150%;
+  width: 95%;
 }
 
 .description-table th,
@@ -54,6 +54,7 @@
 }
 .moderation-history li {
   list-style-position: inside;
+  white-space: pre-line;
 }
 
 .moderators-panel {
@@ -102,7 +103,8 @@
   border: rgb(0,0,0,0.5) solid 1px;
 }
 
-.reject-form select {
+.reject-form select, 
+.request-changes-form select {
   background-color: white;
   color: black;
   height: 30px;

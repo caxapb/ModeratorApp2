@@ -13,6 +13,7 @@
 import { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import AdPreview from '../../components/AdPreview';
+import fetchData from '../../utils/fetchData';
 import { useSearchParams } from 'react-router-dom';
 
 import './Ads.css'
@@ -70,15 +71,25 @@ export default function Ads() {
     if (sortOrder) {
       params.set('sortOrder', sortOrder);
     }
-    
-    fetch(`http://localhost:3001/api/v1/ads?${params.toString()}`)
-      .then(res => res.json())
-      .then(data => {
-        setAds(data.ads || []);
-        setPagination(data.pagination || null);
-        setLoading(false);
+
+    const fetchAds = async () => {
+      try {
+        const data = await fetchData(`http://localhost:3001/api/v1/ads?${params.toString()}`);
+        setAds(data.ads);
+        setPagination(data.pagination);
         localStorage.setItem('ids', JSON.stringify(data.ads.map(ad => ad.id)))
-      });
+      } catch (err) {
+        if (err instanceof TypeError) {
+          console.error("Сетевая ошибка. TypeError:", err.message)
+        } else {
+          console.error("HTTP ошибка.", err.message)
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchAds();
+
   }, [selectedStatuses, selectedCategory, 
     minSelectedPrice, maxSelectedPrice, 
     search, sortBy, sortOrder, curPage, limit]);
@@ -153,7 +164,7 @@ export default function Ads() {
             <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
             <option value="">Порядок</option>
             <option value="asc">Возрастание</option>
-            <option value="desc" selected>Убывание</option>
+            <option value="desc">Убывание</option>
             </select>
           </div>     
           </div>

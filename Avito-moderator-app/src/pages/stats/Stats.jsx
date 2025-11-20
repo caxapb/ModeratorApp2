@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react';
 import ChartCategories from './CategoriesChart';
 import DecisionsChart from './DecisionChart';
 import ActivityBarChart from './ActivityChart';
+import fetchData from '../../utils/fetchData';
 import './Stats.css'
 
 export default function Stats() {
@@ -19,20 +20,23 @@ export default function Stats() {
 
   // запросы к серверу с указанием выбранного периода
   useEffect(() => {
-    fetch(`http://localhost:3001/api/v1/stats/summary?period=${period}`)
-      .then(res => res.json())
-      .then(data => {
-        setStats(data);
-        return fetch(`http://localhost:3001/api/v1/stats/chart/decisions?period=${period}`);
-      })
-      .then(res => res.json())
-      .then(data => {
-        setDecisions(data);
-        return fetch(`http://localhost:3001/api/v1/stats/chart/categories?period=${period}`);
-      }).then(res => res.json())
-      .then(data => {
-        setCategories(data);
-      });
+    const fetchStatsData = async () => {
+      try {
+        const summaryData = await fetchData(`http://localhost:3001/api/v1/stats/summary?period=${period}`);
+        setStats(summaryData);
+        const decisionsData = await fetchData(`http://localhost:3001/api/v1/stats/chart/decisions?period=${period}`);
+        setDecisions(decisionsData);
+        const categoriesData = await fetchData(`http://localhost:3001/api/v1/stats/chart/categories?period=${period}`);
+        setCategories(categoriesData);
+      } catch (err) {
+        if (err instanceof TypeError) {
+          console.error("Сетевая ошибка:", err.message);
+        } else {
+          console.error("Ошибка при загрузке статистики:", err.message);
+        }
+      }
+    }
+    fetchStatsData();
   }, [period]);
 
   return (

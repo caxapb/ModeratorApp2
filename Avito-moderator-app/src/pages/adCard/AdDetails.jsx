@@ -15,28 +15,37 @@ export default function AdDetails({ad}) {
 
   return (
     <div className="ad-description-container">
+      <h3>Продавец</h3>
+      <table className="description-table">
+        <tbody><tr>
+          <th>Имя Продавца</th>
+          <td>{ad.seller.name}</td>
+        </tr><tr>
+          <th>Рейтинг Продавца</th>
+          <td>{ad.seller.rating}</td>
+        </tr><tr>
+          <th>Объявлений у продавца</th>
+          <td>{ad.seller.totalAds}</td>
+        </tr><tr>
+          <th>Продавец зарегистрирован</th>
+          <td>{sellerDate}</td>
+        </tr></tbody>
+      </table>
+
       <h3>Полное описание:</h3>
       <table className="description-table">
         <tbody><tr>
             <th>Цена</th>
             <td>{ad.price} ₽</td>
-            <th>Имя Продавца</th>
-            <td>{ad.seller.name}</td>
           </tr><tr>
             <th>Описание</th>
             <td>{description}</td>
-            <th>Рейтинг Продавца</th>
-            <td>{ad.seller.rating}</td>
           </tr><tr>
             <th>Категория</th>
             <td>{ad.category}</td>
-            <th>Объявлений у продавца</th>
-            <td>{ad.seller.totalAds}</td>
           </tr><tr>
             <th>Статус</th>
             <td>{status}</td>
-            <th>Продавец зарегистрирован</th>
-            <td>{sellerDate}</td>
           </tr><tr>
             <th>Приоритет</th>
             <td>{priority}</td>
